@@ -1,0 +1,11 @@
+May 22, 2020 pre-alpha - made playback test to see if I could playback mp3 files in pyaudio instead of just wav files using librosa
+May 27, 2020 alpha 1 - Began working on app and added queue system for songs
+June 3, 2020 alpha 2 - added YouTube playlist support
+July 29, 2020 alpha 3 - Added Discord rich presence and also made a tentative application icon.
+August 10, 2020 alpha 4 - Added skip and rewind buttons
+August 17, 2020 alpha 5 - Added volume control
+August 24, 2020 alpha 6 - rewrote YouTube playlist support
+October 15, 2020 alpha 7 - made colors of app reflect system colors (prior colors were grey and blue).
+October 16, 2020 alpha 8 - changed song playback to load song in chunks to reduce lag at the beginning of playback.
+October 18, 2020 alpha 9 - rewrote entire queue system to use Song objects
+
