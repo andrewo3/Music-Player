@@ -190,7 +190,7 @@ def audioStreamData():
                                 currentAudioData+=pack('h',normalize(int(leftChannel[i]*32767*volume.number),-32767,32767))
                                 currentAudioData+=pack('h',normalize(int(rightChannel[i]*32767*volume.number),-32767,32767))
                         audioIndex.set(audioIndex.number+1024)
-                    elif (None in leftChannel[audioIndex.number:audioIndex.number+1024] or None in rightChannel[audioIndex.number:audioIndex.number+1024]) and len(leftChannel)-audioIndex.number>44100:
+                    elif (None in leftChannel[audioIndex.number:audioIndex.number+1024] or None in rightChannel[audioIndex.number:audioIndex.number+1024]) and len(leftChannel)+44100-audioIndex.number>44100:
                         #audioIndex.set(audioIndex.number)
                         time.sleep(0.01)
                     elif len(leftChannel)-audioIndex.number<=44100:
@@ -546,13 +546,13 @@ class Playlist(object):
         self.darkenTrack.set_alpha(128)
         self.darkenTrack.fill((0, 0, 0))
         for index, song in enumerate(songObjList):
-            if index*int(dimensions[0]/12)<dimensions[1]-segoe.size("Your Playlist")[1]:
+            if index*int(dimensions[0]/12)+self.scroll<dimensions[1]-segoe.size("Your Playlist")[1]:
                 if songIndex==index:
-                    playlist.blit(lighten,(0,index*int(dimensions[0]/12)))
-                playlist.blit(song.surf,(0,index*int(dimensions[0]/12)))
-                pygame.draw.rect(playlist,uiColor,pygame.Rect(0,index*int(dimensions[0]/12),int(dimensions[0]/2),int(dimensions[0]/12)),2)
+                    playlist.blit(lighten,(0,self.scroll+index*int(dimensions[0]/12)))
+                playlist.blit(song.surf,(0,index*int(dimensions[0]/12)+self.scroll))
+                pygame.draw.rect(playlist,uiColor,pygame.Rect(0,index*int(dimensions[0]/12)+self.scroll,int(dimensions[0]/2),int(dimensions[0]/12)),2)
                 if songIndex==index:
-                    playlist.blit(song.nameFont.render("--Now Playing--",True,uiColor),(int(dimensions[0]/4)-int(song.nameFont.size("--Now Playing--")[0]/2),index*int(dimensions[0]/12)+int(song.surf.get_height()/6)))
+                    playlist.blit(song.nameFont.render("--Now Playing--",True,uiColor),(int(dimensions[0]/4)-int(song.nameFont.size("--Now Playing--")[0]/2),self.scroll+index*int(dimensions[0]/12)+int(song.surf.get_height()/6)))
         WINDOW.blit(playlist,(pos[0]+int(dimensions[0]*1/40),pos[1]+segoe.size("Your Playlist")[1]))
         pygame.draw.rect(WINDOW, (baseColor),
                          pygame.Rect(pos[0]+int(dimensions[0]*1/40), pos[1],
@@ -606,6 +606,9 @@ class Playlist(object):
                 self.queueTransition = 1
                 self.transTime=0
         elif self.expandQueue == True and self.queueTransition==-1:
+            for event in allEvents:
+                if event.type==pygame.MOUSEWHEEL:
+                    self.scroll+=event.y*10
             darken.set_alpha(128)
             WINDOW.blit(darken, (0, 0))
             self.blitPlaylist(((int(dimensions[0] * 19 / 40),0)))
