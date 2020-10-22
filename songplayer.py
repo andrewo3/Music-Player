@@ -1,4 +1,5 @@
 #this program will play mp3s based on the name and maybe do other things idk
+#DSG playlist: https://www.youtube.com/playlist?list=UUG6QEHCBfWZOnv7UVxappyw
 import pygame, winreg, os, pyaudio, urllib.request, threading, urllib3, json, pypresence, time
 from bs4 import BeautifulSoup
 from librosa import load
@@ -81,7 +82,8 @@ segoe=pygame.font.Font("Segoe UI Font/Segoe UI.ttf",int(dimensions[1]/20))
 playlistSegoe=pygame.font.Font("Segoe UI Font/Segoe UI.ttf",int(dimensions[1]/40))
 pygame.display.set_caption("Music Player")
 os.environ['SDL_VIDEO_WINDOW_POS']='%f,%f'%(screenDim[0]/4,screenDim[0]/4)
-WINDOW=pygame.display.set_mode(dimensions,pygame.RESIZABLE)
+WINDOW=pygame.display.set_mode(dimensions,pygame.RESIZABLE|pygame.DOUBLEBUF)
+WINDOW.set_alpha(None)
 pygame.display.set_icon(pygame.image.load("icon.png").convert())
 topBarColor=getAccentColor()
 songQueue=[]
@@ -608,7 +610,17 @@ class Playlist(object):
         elif self.expandQueue == True and self.queueTransition==-1:
             for event in allEvents:
                 if event.type==pygame.MOUSEWHEEL:
-                    self.scroll+=event.y*10
+                    #print(event.y,self.scroll, -(len(songObjList)*int(dimensions[0]/12))+(dimensions[1]-segoe.size("Your Playlist")[1]*2))
+                    if (-event.y>0 and self.scroll>-(len(songObjList)*int(dimensions[0]/12))+(dimensions[1]-segoe.size("Your Playlist")[1]*2)) or (-event.y<0 and self.scroll<0):
+                        self.scroll+=event.y*10
+                    else:
+                        if -event.y>0:
+                            self.scroll=-(len(songObjList)*int(dimensions[0]/12))+(dimensions[1]-segoe.size("Your Playlist")[1]*2)
+                        elif -event.y<0:
+                            self.scroll=0
+                if event.type==pygame.MOUSEBUTTONUP:
+                    if event.button==1:
+                        print(int((pygame.mouse.get_pos()[1]-self.scroll-segoe.size("Your Playlist")[1])/int(dimensions[0]/12)))
             darken.set_alpha(128)
             WINDOW.blit(darken, (0, 0))
             self.blitPlaylist(((int(dimensions[0] * 19 / 40),0)))
